@@ -2,12 +2,10 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
 import { useForm } from "@tanstack/react-form"
 
 import { cn } from "@/lib/utils"
 import { loginSchema } from "@/schemas/auth.schema"
-import { useLogin } from "@/hooks/auth/mutations/auth.mutation"
 import { getApiErrorMessage, getApiFieldErrors } from "@/lib/api-error"
 
 import { Button } from "@/components/ui/button"
@@ -25,8 +23,9 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { toast } from "../ui/toast"
 import { Eye, EyeOff } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { useSignin } from "@/hooks/auth/mutations/login.mutation"
 
 type ApiFieldErrors = Record<string, string[]>
 
@@ -49,9 +48,8 @@ export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const login = useSignin()
   const router = useRouter()
-  const login = useLogin()
-
   const [errorMessage, setErrorMessage] = useState("")
   const [apiFieldErrors, setApiFieldErrors] = useState<ApiFieldErrors>({})
   const [showPassword, setShowPassword] = useState<boolean>(false)
@@ -82,20 +80,18 @@ export function LoginForm({
       setApiFieldErrors({})
 
       try {
-        await login.mutateAsync({
-          identifier: value.identifier.trim(),
-          password: value.password,
-        })
-
-        toast.add({
-          title: "Đăng nhập thành công",
-          description: "Bạn đã đăng nhập thành công.",
-          type: "success",
-        })
-
-        form.reset()
-
-        router.replace("/")
+        await login.mutateAsync(
+          {
+            identifier: value.identifier.trim(),
+            password: value.password,
+          },
+          {
+            onSuccess: () => {
+              router.push("/")
+              form.reset()
+            },
+          }
+        )
       } catch (error) {
         setErrorMessage(getApiErrorMessage(error))
         setApiFieldErrors(getApiFieldErrors(error))

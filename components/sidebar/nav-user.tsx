@@ -34,7 +34,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { AuthUser } from "@/types/auth.type"
-import { useLogout } from "@/hooks/auth/mutations/auth.mutation"
+import { useLogout } from "@/hooks/auth/mutations/logout.mutaion"
 
 const themes = [
   { value: "light", label: "Light", icon: IconSun },

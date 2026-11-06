@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 
-const ACCESS_COOKIE = process.env.NODE_ENV === "production" ? "__Host-at" : "at"
+const ACCESS_COOKIE = "access_token"
 
 const AUTH_ROUTES = ["/signin", "/signup"]
 const PROTECTED_ROUTES = ["/", "/chat"]
@@ -8,7 +8,8 @@ const PROTECTED_ROUTES = ["/", "/chat"]
 function matchesRoute(pathname: string, routes: string[]) {
   return routes.some(
     (route) =>
-      pathname === route || (route !== "/" && pathname.startsWith(`${route}/`))
+      pathname === route ||
+      (route !== "/" && pathname.startsWith(`${route}/`))
   )
 }
 
@@ -22,7 +23,10 @@ export function proxy(request: NextRequest) {
   if (isProtectedRoute && !hasAccessCookie) {
     const signInUrl = new URL("/signin", request.url)
 
-    signInUrl.searchParams.set("callbackUrl", `${pathname}${search}`)
+    signInUrl.searchParams.set(
+      "callbackUrl",
+      `${pathname}${search}`
+    )
 
     return NextResponse.redirect(signInUrl)
   }

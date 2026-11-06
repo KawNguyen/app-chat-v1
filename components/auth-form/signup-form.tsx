@@ -22,10 +22,9 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { useRegister } from "@/hooks/auth/mutations/auth.mutation"
 import { getApiErrorMessage } from "@/lib/api-error"
 import { toast } from "../ui/toast"
-import { useRouter } from "next/navigation"
+import { useRegister } from "@/hooks/auth/mutations/register.mutation"
 
 function getFieldError(errors: Array<unknown>): string | undefined {
   for (const error of errors) {
@@ -45,7 +44,6 @@ function getFieldError(errors: Array<unknown>): string | undefined {
 }
 
 export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
-  const router = useRouter()
   const register = useRegister()
   const [errorMessage, setErrorMessage] = useState<string>("")
 

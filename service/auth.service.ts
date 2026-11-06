@@ -1,4 +1,4 @@
-import axiosInstance from "@/lib/axios-instance"
+import { api, setCsrfToken } from "@/lib/api-client"
 import type {
   ApiResponse,
   AuthResponse,
@@ -9,40 +9,35 @@ import type {
 
 export const authService = {
   register: async (data: RegisterRequest) => {
-    const response = await axiosInstance.post<AuthResponse>(
-      "/auth/register",
+    const response = await api.post<AuthResponse>(
+      "/auth/signup",
       data
     )
 
+    setCsrfToken(response.data.data.csrfToken)
     return response.data
   },
 
   login: async (data: LoginRequest) => {
-    const response = await axiosInstance.post<AuthResponse>("/auth/login", data)
+    const response = await api.post<AuthResponse>("/auth/signin", data)
 
+    setCsrfToken(response.data.data.csrfToken)
     return response.data
   },
 
   me: async () => {
-    const response = await axiosInstance.get<ApiResponse<AuthUser>>("/users/me")
-
-    return response.data
-  },
-
-  refresh: async () => {
-    const response =
-      await axiosInstance.post<ApiResponse<{ csrfToken: string }>>(
-        "/auth/refresh"
-      )
+    const response = await api.get<ApiResponse<AuthUser>>("/users/me")
 
     return response.data
   },
 
   logout: async () => {
-    await axiosInstance.post("/auth/logout")
+    await api.post("/auth/logout")
+    setCsrfToken(null)
   },
 
   logoutAll: async () => {
-    await axiosInstance.post("/auth/logout-all")
+    await api.post("/auth/logout-all")
+    setCsrfToken(null)
   },
 }

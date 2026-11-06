@@ -12,7 +12,7 @@ export default async function Layout({
   children: React.ReactNode
 }) {
   const cookieStore = await cookies()
-  const accessToken = cookieStore.get("at")?.value
+  const accessToken = cookieStore.get("access_token")?.value
 
   if (!accessToken) {
     redirect("/signin")
